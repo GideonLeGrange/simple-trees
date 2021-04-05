@@ -2,6 +2,7 @@ package me.legrange;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /** A simple tree class that hides the tree implementation
  *
@@ -30,14 +31,21 @@ public final class Tree<T> {
         return index.containsKey(object);
     }
 
-    Iterator<T> depthFirstIterator() {
-        return new DepthFirstIterator(this);
+    /** Return a stream that does depth-first traversal of the tree.
+     *
+     * @return The stream
+     */
+   public Stream<T> depthStream() {
+        return makeDepthStream(root.getData());
     }
 
-    Iterator<T> breadthFirstIterator() {
-        return new BreadthFirstIterator(this);
+    /** Return a stream that does breadth-first traversal of the tree.
+     *
+     * @return The stream
+     */
+    public Stream<T> breadthStream() {
+        return makeBreadthStream(Collections.singletonList(root.getData()));
     }
-
 
     /** Return the data at the root of the tree
      *
@@ -107,6 +115,19 @@ public final class Tree<T> {
             throw  new NoSuchElementException("No data found for object");
         }
         return index.get(object);
+    }
+
+    private Stream<T> makeDepthStream(T data) {
+        return Stream.concat(Stream.of(data),
+                this.getChildren(data).stream().flatMap(this::makeDepthStream));
+    }
+
+    private Stream<T> makeBreadthStream(List<T> data) {
+        if (data.isEmpty()) {
+            return Stream.empty();
+        }
+        return Stream.concat(data.stream(),
+                makeBreadthStream(data.stream().flatMap(object -> this.getChildren(object).stream()).collect(Collectors.toList())));
     }
 
 }
