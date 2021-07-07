@@ -26,8 +26,4 @@ Add a child data as child of another node:
   tree.add("Second", "Delta");
 ```
 
-Check if the tree contains certain data:
-
-```java
-
-```
+TBD
