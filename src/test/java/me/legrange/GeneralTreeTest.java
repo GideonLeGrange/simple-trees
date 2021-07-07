@@ -88,4 +88,12 @@ class GeneralTreeTest {
         int width = asymmetric.getWidth();
         assertEquals(6, width, "Width must match");
     }
+
+    @Test
+    void contains() {
+        assertEquals(true, symmetric.contains("A"), "Must contain A");
+        assertEquals(true, symmetric.contains("1"), "Must contain 1");
+        assertEquals(false, symmetric.contains("z"), "Must not contain z");
+        assertEquals(false, symmetric.contains("0"), "Must not contain 0");
+    }
 }

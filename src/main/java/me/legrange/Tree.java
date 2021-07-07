@@ -52,7 +52,6 @@ public interface Tree<T> {
      */
     int getWidth();
 
-
     /**
      * Get the parent data for child data
      *

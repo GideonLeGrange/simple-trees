@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class BinaryGeneralTreeTest {
+class BinaryTreeTest {
 
     private static final String[] DEPTH = {
             "ROOT", "A", "1", "a", "b", "2", "c", "d", "B", "3", "e","f", "4", "g","h"
