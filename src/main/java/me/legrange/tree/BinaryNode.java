@@ -1,7 +1,4 @@
-package me.legrange;
-
-import java.util.ArrayList;
-import java.util.List;
+package me.legrange.tree;
 
 /** Binary tree node structure.
  *

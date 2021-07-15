@@ -1,4 +1,4 @@
-package me.legrange;
+package me.legrange.tree;
 
 public final class BinarySearchTree<T extends Comparable> extends AbstractBinaryTree<T> {
 

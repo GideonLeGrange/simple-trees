@@ -1,4 +1,4 @@
-package me.legrange;
+package me.legrange.tree;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

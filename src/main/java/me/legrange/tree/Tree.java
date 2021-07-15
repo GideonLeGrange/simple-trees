@@ -1,4 +1,4 @@
-package me.legrange;
+package me.legrange.tree;
 
 import java.util.Optional;
 import java.util.stream.Stream;

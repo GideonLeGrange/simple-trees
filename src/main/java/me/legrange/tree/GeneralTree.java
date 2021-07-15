@@ -1,4 +1,4 @@
-package me.legrange;
+package me.legrange.tree;
 
 import java.util.*;
 import java.util.stream.Collectors;
