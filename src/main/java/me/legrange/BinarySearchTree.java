@@ -44,6 +44,21 @@ public final class BinarySearchTree<T extends Comparable> implements Tree<T> {
         return root.getData();
     }
 
+    @Override
+    public Optional<T> getParent(T child) {
+        return Optional.ofNullable(getNode(child).getParentNode()).map(node -> node.getData());
+    }
+
+    @Override
+    public int getDepth() {
+        return calculateDepth(root);
+    }
+
+    @Override
+    public int getWidth() {
+        return calculateWidth(root);
+    }
+
     /**
      * Add a right child to a specific parent.
      *
@@ -66,11 +81,6 @@ public final class BinarySearchTree<T extends Comparable> implements Tree<T> {
             throw new IllegalArgumentException("Duplicate element");
         }
         index.put(child, newNode);
-    }
-
-    @Override
-    public Optional<T> getParent(T child) {
-        return Optional.ofNullable(getNode(child).getParentNode()).map(node -> node.getData());
     }
 
     /**
@@ -97,16 +107,6 @@ public final class BinarySearchTree<T extends Comparable> implements Tree<T> {
             throw new NoSuchElementException("No data found for object");
         }
         return Optional.ofNullable(index.get(parent)).flatMap(node -> Optional.ofNullable(node.getRight()).map(n -> n.getData()));
-    }
-
-    @Override
-    public int getDepth() {
-        return calculateDepth(root);
-    }
-
-    @Override
-    public int getWidth() {
-        return calculateWidth(root);
     }
 
     /** Find the data closest to the search term in the tree.

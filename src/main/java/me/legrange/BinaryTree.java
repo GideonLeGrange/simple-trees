@@ -24,41 +24,39 @@ public final class BinaryTree<T> implements Tree<T> {
         index.put(rootData, root);
     }
 
-    /**
-     * Check if the tree contains the given data somewhere.
-     *
-     * @param object The object
-     * @return Is it in the tree?
-     */
+    @Override
     public boolean contains(T object) {
         return index.containsKey(object);
     }
 
-    /**
-     * Return a stream that does depth-first traversal of the tree.
-     *
-     * @return The stream
-     */
+    @Override
     public Stream<T> depthStream() {
         return makeDepthStream(root.getData());
     }
 
-    /**
-     * Return a stream that does breadth-first traversal of the tree.
-     *
-     * @return The stream
-     */
+    @Override
     public Stream<T> breadthStream() {
         return makeBreadthStream(Collections.singletonList(getRoot()));
     }
 
-    /**
-     * Return the data at the root of the tree
-     *
-     * @return The data
-     */
+    @Override
     public T getRoot() {
         return root.getData();
+    }
+
+    @Override
+    public Optional<T> getParent(T child) {
+        return Optional.ofNullable(getNode(child).getParentNode()).map(node -> node.getData());
+    }
+
+    @Override
+    public int getDepth() {
+        return calculateDepth(root);
+    }
+
+    @Override
+    public int getWidth() {
+        return calculateWidth(root);
     }
 
     /**
@@ -123,16 +121,6 @@ public final class BinaryTree<T> implements Tree<T> {
     }
 
     /**
-     * Get the parent data for child data
-     *
-     * @param child The child data
-     * @return The parent data
-     */
-    public Optional<T> getParent(T child) {
-        return Optional.ofNullable(getNode(child).getParentNode()).map(node -> node.getData());
-    }
-
-    /**
      * Get the left child data for specific parent data.
      *
      * @param parent The parent data
@@ -156,14 +144,6 @@ public final class BinaryTree<T> implements Tree<T> {
             throw new NoSuchElementException("No data found for object");
         }
         return Optional.ofNullable(index.get(parent)).flatMap(node -> Optional.ofNullable(node.getRight()).map(n -> n.getData()));
-    }
-
-    public int getDepth() {
-        return calculateDepth(root);
-    }
-
-    public int getWidth() {
-        return calculateWidth(root);
     }
 
     /**
