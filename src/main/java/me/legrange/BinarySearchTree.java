@@ -9,10 +9,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public final class BinarySearchTree<T extends Comparable> implements Tree<T> {
-
-    private final Map<T, BinaryNode<T>> index = new HashMap();
-    private final BinaryNode<T> root;
+public final class BinarySearchTree<T extends Comparable> extends AbstractBinaryTree<T> {
 
     /**
      * Create a new binary ree with the given data at the root.
@@ -20,43 +17,7 @@ public final class BinarySearchTree<T extends Comparable> implements Tree<T> {
      * @param rootData The data for the root
      */
     public BinarySearchTree(T rootData) {
-        this.root = new BinaryNode<>(null, rootData);
-        index.put(rootData, root);
-    }
-
-    @Override
-    public boolean contains(T object) {
-        return index.containsKey(object);
-    }
-
-    @Override
-    public Stream<T> depthStream() {
-        return makeDepthStream(root.getData());
-    }
-
-    @Override
-    public Stream<T> breadthStream() {
-        return makeBreadthStream(Collections.singletonList(getRoot()));
-    }
-
-    @Override
-    public T getRoot() {
-        return root.getData();
-    }
-
-    @Override
-    public Optional<T> getParent(T child) {
-        return Optional.ofNullable(getNode(child).getParentNode()).map(node -> node.getData());
-    }
-
-    @Override
-    public int getDepth() {
-        return calculateDepth(root);
-    }
-
-    @Override
-    public int getWidth() {
-        return calculateWidth(root);
+        super(rootData);
     }
 
     /**
@@ -73,43 +34,17 @@ public final class BinarySearchTree<T extends Comparable> implements Tree<T> {
         int diff = child.compareTo(parent.getData());
         if (diff < 0) {
             parent.addLeft(newNode);
-        }
-        else if (diff > 0) {
+        } else if (diff > 0) {
             parent.addRight(newNode);
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Duplicate element");
         }
         index.put(child, newNode);
     }
 
-    /**
-     * Get the left child data for specific parent data.
-     *
-     * @param parent The parent data
-     * @return The child data
-     */
-    public Optional<T> getLeft(T parent) {
-        if (!index.containsKey(parent)) {
-            throw new NoSuchElementException("No data found for object");
-        }
-        return Optional.ofNullable(index.get(parent)).flatMap(node -> Optional.ofNullable(node.getLeft()).map(n -> n.getData()));
-    }
 
     /**
-     * Get the right child data for specific parent data.
-     *
-     * @param parent The parent data
-     * @return The child data
-     */
-    public Optional<T> getRight(T parent) {
-        if (!index.containsKey(parent)) {
-            throw new NoSuchElementException("No data found for object");
-        }
-        return Optional.ofNullable(index.get(parent)).flatMap(node -> Optional.ofNullable(node.getRight()).map(n -> n.getData()));
-    }
-
-    /** Find the data closest to the search term in the tree.
+     * Find the data closest to the search term in the tree.
      *
      * @param data The search term
      * @return The closest found data
@@ -118,18 +53,6 @@ public final class BinarySearchTree<T extends Comparable> implements Tree<T> {
         return findParent(root, data).getData();
     }
 
-    /**
-     * Convenience method to find the node for an object
-     *
-     * @param object The data
-     * @return The node
-     */
-    private BinaryNode<T> getNode(T object) {
-        if (!index.containsKey(object)) {
-            throw new NoSuchElementException("No data found for object");
-        }
-        return index.get(object);
-    }
 
     /**
      * Recursively set up a depth first stream.
@@ -191,12 +114,10 @@ public final class BinarySearchTree<T extends Comparable> implements Tree<T> {
                 return node;
             }
             return findParent(node.getRight(), value);
-        }
-        else {
+        } else {
             return node;
         }
     }
-
 
 
 }

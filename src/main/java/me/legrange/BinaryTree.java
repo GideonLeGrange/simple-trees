@@ -58,5 +58,5 @@ public final class BinaryTree<T> extends AbstractBinaryTree<T> {
     public void addRight(T parent, T child) {
         super.addRight(parent, child);
     }
-    
+
 }

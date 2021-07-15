@@ -11,8 +11,8 @@ import java.util.stream.Stream;
 
 abstract class AbstractBinaryTree<T> implements Tree<T> {
 
-    private final Map<T, BinaryNode<T>> index = new HashMap();
-    private final BinaryNode<T> root;
+    protected final Map<T, BinaryNode<T>> index = new HashMap();
+    protected final BinaryNode<T> root;
 
     /**
      * Create a new binary ree with the given data at the root.
