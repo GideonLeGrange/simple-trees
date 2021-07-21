@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
+
 /**
  * A simple tree class that hides the tree implementation. The user works only with the Tree object
  * and with their data. Since the tree relies on hashCode() and equals() internally, for best results
@@ -68,7 +70,7 @@ public final class GeneralTree<T> implements Tree<T> {
      */
     public void add(T child) {
         if (index.containsKey(child)) {
-            throw new IllegalArgumentException("Data is already in the tree");
+            throw new IllegalArgumentException(format("Data '%s' is already in the tree", child));
         }
         GeneralNode node = new GeneralNode(null, child);
         index.put(child, node);
@@ -82,10 +84,10 @@ public final class GeneralTree<T> implements Tree<T> {
      * @param child  The child data
      */
     public void add(T parent, T child) {
-        GeneralNode<T> parentNode = getNode(parent);
         if (index.containsKey(child)) {
-            throw new IllegalArgumentException("Data is already in the tree");
+            throw new IllegalArgumentException(format("Data '%s' is already in the tree", child));
         }
+        GeneralNode<T> parentNode = getNode(parent);
         GeneralNode node = new GeneralNode(parentNode, child);
         parentNode.add(node);
         index.put(child, node);
@@ -101,7 +103,7 @@ public final class GeneralTree<T> implements Tree<T> {
      */
     public List<T> getChildren(T parent) {
         if (!index.containsKey(parent)) {
-            throw new NoSuchElementException("No data found for object");
+            throw new NoSuchElementException(format("No data found for object '%s'", parent));
         }
         return index.get(parent).getChildren().stream()
                 .map(node -> node.getData()).collect(Collectors.toList());
