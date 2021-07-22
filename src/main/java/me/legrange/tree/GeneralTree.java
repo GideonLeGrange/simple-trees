@@ -15,7 +15,6 @@ import static java.lang.String.format;
  */
 public final class GeneralTree<T> implements Tree<T> {
 
-    private final Map<T, GeneralNode<T>> index = new HashMap();
     private final GeneralNode<T> root;
 
     /**
@@ -25,12 +24,11 @@ public final class GeneralTree<T> implements Tree<T> {
      */
     public GeneralTree(T rootData) {
         this.root = new GeneralNode(null, rootData);
-        index.put(rootData, root);
     }
 
     @Override
     public boolean contains(T object) {
-        return index.containsKey(object);
+        return depthStream().anyMatch(data -> data.equals(object));
     }
 
     @Override
@@ -69,12 +67,7 @@ public final class GeneralTree<T> implements Tree<T> {
      * @param child The child data
      */
     public void add(T child) {
-        if (index.containsKey(child)) {
-            throw new IllegalArgumentException(format("Data '%s' is already in the tree", child));
-        }
-        GeneralNode node = new GeneralNode(null, child);
-        index.put(child, node);
-        root.add(node);
+        root.add(new GeneralNode(null, child));
     }
 
     /**
@@ -84,16 +77,9 @@ public final class GeneralTree<T> implements Tree<T> {
      * @param child  The child data
      */
     public void add(T parent, T child) {
-        if (index.containsKey(child)) {
-            throw new IllegalArgumentException(format("Data '%s' is already in the tree", child));
-        }
         GeneralNode<T> parentNode = getNode(parent);
-        GeneralNode node = new GeneralNode(parentNode, child);
-        parentNode.add(node);
-        index.put(child, node);
+        parentNode.add(new GeneralNode(parentNode, child));
     }
-
-
 
     /**
      * Get the child data for specific parent data.
@@ -102,10 +88,7 @@ public final class GeneralTree<T> implements Tree<T> {
      * @return The child data
      */
     public List<T> getChildren(T parent) {
-        if (!index.containsKey(parent)) {
-            throw new NoSuchElementException(format("No data found for object '%s'", parent));
-        }
-        return index.get(parent).getChildren().stream()
+        return getNode(parent).getChildren().stream()
                 .map(node -> node.getData()).collect(Collectors.toList());
     }
 
@@ -116,10 +99,13 @@ public final class GeneralTree<T> implements Tree<T> {
      * @return The node
      */
     private GeneralNode<T> getNode(T object) {
-        if (!index.containsKey(object)) {
-            throw new NoSuchElementException("No data found for object");
+        Optional<GeneralNode<T>> first = makeDepthStream(root)
+                .filter(node -> node.getData().equals(object))
+                .findFirst();
+        if (first.isPresent()) {
+            return first.get();
         }
-        return index.get(object);
+        throw new NoSuchElementException("No data found for object");
     }
 
     /**
