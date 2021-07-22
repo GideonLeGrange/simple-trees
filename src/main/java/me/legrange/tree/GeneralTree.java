@@ -105,7 +105,7 @@ public final class GeneralTree<T> implements Tree<T> {
         if (first.isPresent()) {
             return first.get();
         }
-        throw new NoSuchElementException("No data found for object");
+        throw new NoSuchElementException(format("No data found for object '%s'", object));
     }
 
     /**
