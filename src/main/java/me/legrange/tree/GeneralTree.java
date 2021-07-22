@@ -35,12 +35,12 @@ public final class GeneralTree<T> implements Tree<T> {
 
     @Override
     public Stream<T> depthStream() {
-        return makeDepthStream(root.getData());
+        return makeDepthStream(root).map(node -> node.getData());
     }
 
     @Override
     public Stream<T> breadthStream() {
-        return makeBreadthStream(Collections.singletonList(root.getData()));
+        return makeBreadthStream(Collections.singletonList(root)).map(node -> node.getData());
     }
 
     @Override
@@ -128,9 +128,9 @@ public final class GeneralTree<T> implements Tree<T> {
      * @param data The point in the tree to work from
      * @return The stream
      */
-    private Stream<T> makeDepthStream(T data) {
+    private Stream<GeneralNode<T>> makeDepthStream(GeneralNode<T> data) {
         return Stream.concat(Stream.of(data),
-                this.getChildren(data).stream().flatMap(this::makeDepthStream));
+                data.getChildren().stream().flatMap(this::makeDepthStream));
     }
 
     /**
@@ -139,12 +139,12 @@ public final class GeneralTree<T> implements Tree<T> {
      * @param data The point in the tree to work from
      * @return The stream
      */
-    private Stream<T> makeBreadthStream(List<T> data) {
+    private Stream<GeneralNode<T>> makeBreadthStream(List<GeneralNode<T>> data) {
         if (data.isEmpty()) {
             return Stream.empty();
         }
         return Stream.concat(data.stream(),
-                makeBreadthStream(data.stream().flatMap(object -> this.getChildren(object).stream()).collect(Collectors.toList())));
+                makeBreadthStream(data.stream().flatMap(object -> object.getChildren().stream()).collect(Collectors.toList())));
     }
 
     private int calculateDepth(GeneralNode<T> node) {
