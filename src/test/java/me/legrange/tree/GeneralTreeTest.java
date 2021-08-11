@@ -96,4 +96,16 @@ class GeneralTreeTest {
         assertEquals(false, symmetric.contains("z"), "Must not contain z");
         assertEquals(false, symmetric.contains("0"), "Must not contain 0");
     }
+
+    @Test
+    void correctRootParent() {
+        assertEquals(true, symmetric.getParent("A").isPresent(), "Have parent for A");
+        assertEquals(true, symmetric.getParent("A").get().equals("ROOT"), "Parent for A is ROOT");
+    }
+
+    @Test
+    void correctParent() {
+        assertEquals(true, symmetric.getParent("9").isPresent(), "Have parent for 9");
+        assertEquals(true, symmetric.getParent("9").get().equals("C"), "Parent for 9 is C");
+    }
 }

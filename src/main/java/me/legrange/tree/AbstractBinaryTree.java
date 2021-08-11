@@ -68,7 +68,7 @@ abstract class AbstractBinaryTree<T> implements Tree<T> {
         if (index.containsKey(child)) {
             throw new IllegalArgumentException("Data is already in the tree");
         }
-        BinaryNode node = new BinaryNode(null, child);
+        BinaryNode node = new BinaryNode(root, child);
         index.put(child, node);
         root.addLeft(node);
     }
@@ -82,7 +82,7 @@ abstract class AbstractBinaryTree<T> implements Tree<T> {
         if (index.containsKey(child)) {
             throw new IllegalArgumentException("Data is already in the tree");
         }
-        BinaryNode node = new BinaryNode(null, child);
+        BinaryNode node = new BinaryNode(root, child);
         index.put(child, node);
         root.addRight(node);
     }

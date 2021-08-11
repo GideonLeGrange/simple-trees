@@ -69,4 +69,16 @@ class BinaryTreeTest {
         assertEquals(8, width, "Width must match");
     }
 
+    @Test
+    void correctRootParent() {
+        assertEquals(true, symmetric.getParent("A").isPresent(), "Have parent for A");
+        assertEquals(true, symmetric.getParent("A").get().equals("ROOT"), "Parent for A is ROOT");
+    }
+
+    @Test
+    void correctParent() {
+        assertEquals(true, symmetric.getParent("h").isPresent(), "Have parent for h");
+        assertEquals(true, symmetric.getParent("h").get().equals("4"), "Parent for h is 4");
+    }
+
 }

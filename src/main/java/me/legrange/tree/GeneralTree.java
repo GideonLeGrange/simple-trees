@@ -67,7 +67,7 @@ public final class GeneralTree<T> implements Tree<T> {
      * @param child The child data
      */
     public void add(T child) {
-        root.add(new GeneralNode(null, child));
+        root.add(new GeneralNode(root, child));
     }
 
     /**
