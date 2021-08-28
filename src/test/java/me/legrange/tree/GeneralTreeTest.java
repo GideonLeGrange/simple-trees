@@ -11,6 +11,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GeneralTreeTest {
 
+    //Inorder   (Left, Root, Right) :
+    private static final String[] IN_ORDER_DEPTH = {""};
+
     private static final String[] DEPTH = {
             "ROOT", "A", "1", "2", "3", "B", "4", "5", "6", "C", "7", "8", "9"
     };
@@ -56,6 +59,13 @@ class GeneralTreeTest {
         List<String> have = symmetric.depthStream().collect(Collectors.toList());
         List<String> want = Arrays.asList(DEPTH);
         assertArrayEquals(want.toArray(), have.toArray(), "Depth first must match");
+    }
+
+    @Test
+    void inOrderDepthStream() {
+        List<String> have = symmetric.depthStream().collect(Collectors.toList());
+        List<String> want = Arrays.asList(IN_ORDER_DEPTH);
+        assertArrayEquals(want.toArray(), have.toArray(), "In-order depth-first first must match");
     }
 
     @Test

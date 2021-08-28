@@ -34,6 +34,10 @@ abstract class AbstractBinaryTree<T> implements Tree<T> {
         return makeDepthStream(root.getData());
     }
 
+    public final Stream<T> inOrderDepthStream() {
+        return makeInOrderDepthStream(root.getData());
+    }
+
     @Override
     public final Stream<T> breadthStream() {
         return makeBreadthStream(Collections.singletonList(getRoot()));
@@ -173,6 +177,23 @@ abstract class AbstractBinaryTree<T> implements Tree<T> {
                         left.isPresent() ? Stream.of(left.get()).flatMap(this::makeDepthStream) : Stream.empty(),
                         right.isPresent() ? Stream.of(right.get()).flatMap(this::makeDepthStream) : Stream.empty()));
     }
+
+    /**
+     * Recursively set up an in-order depth first stream.
+     *
+     * @param data The point in the tree to work from
+     * @return The stream
+     */
+    private Stream<T> makeInOrderDepthStream(T data) {
+        // Inorder   (Left, Root, Right) :
+        Optional<T> left = getLeft(data);
+        Optional<T> right = getRight(data);
+        return Stream.concat(
+                left.isPresent() ? Stream.of(left.get()).flatMap(this::makeInOrderDepthStream) : Stream.empty(),
+                Stream.concat(Stream.of(data),
+                right.isPresent() ? Stream.of(right.get()).flatMap(this::makeInOrderDepthStream) : Stream.empty()));
+    }
+
 
     /**
      * Recursively set up a breadth first stream.

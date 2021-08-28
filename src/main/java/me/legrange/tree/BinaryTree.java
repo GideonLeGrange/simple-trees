@@ -2,7 +2,6 @@ package me.legrange.tree;
 
 public final class BinaryTree<T> extends AbstractBinaryTree<T> {
 
-
     /**
      * Create a new binary ree with the given data at the root.
      *
