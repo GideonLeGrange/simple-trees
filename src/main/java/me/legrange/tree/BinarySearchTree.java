@@ -17,7 +17,7 @@ public final class BinarySearchTree<T extends Comparable> extends AbstractBinary
      * @param child The child data
      */
     public void add(T child) {
-        if (index.containsKey(child)) {
+        if (contains(child)) {
             throw new IllegalArgumentException("Data is already in the tree");
         }
         BinaryNode<T> parent = findParent(root, child);
@@ -30,9 +30,7 @@ public final class BinarySearchTree<T extends Comparable> extends AbstractBinary
         } else {
             throw new IllegalArgumentException("Duplicate element");
         }
-        index.put(child, newNode);
     }
-
 
     /**
      * Find the data closest to the search term in the tree.

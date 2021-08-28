@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 abstract class AbstractBinaryTree<T> implements Tree<T> {
 
-    protected final Map<T, BinaryNode<T>> index = new HashMap();
     protected final BinaryNode<T> root;
 
     /**
@@ -21,24 +21,24 @@ abstract class AbstractBinaryTree<T> implements Tree<T> {
      */
     protected AbstractBinaryTree(T rootData) {
         this.root = new BinaryNode<>(null, rootData);
-        index.put(rootData, root);
     }
 
     @Override
     public final boolean contains(T object) {
-        return index.containsKey(object);
+        return preOrderDepthStream().anyMatch(val -> val.equals(object));
     }
 
     public final Stream<T> inOrderDepthStream() {
-        return makeInOrderDepthStream(root.getData());
+        return makeInOrderDepthStream(root).map(node -> node.getData());
     }
 
     public final Stream<T> preOrderDepthStream() {
-        return makePreOrderDepthStream(root.getData());
+        return makePreOrderDepthStream(root).map(node -> node.getData());
     }
 
     public final Stream<T> postOrderDepthStream() {
-        return makePostOrderDepthStream(root.getData());
+        return makePostOrderDepthStream(root)
+                .map(node -> node.getData());
     }
 
     @Override
@@ -53,7 +53,10 @@ abstract class AbstractBinaryTree<T> implements Tree<T> {
 
     @Override
     public final Optional<T> getParent(T child) {
-        return Optional.ofNullable(getNode(child).getParentNode()).map(node -> node.getData());
+        return makePreOrderDepthStream(root)
+                .filter(node -> node.getData().equals(child)).findFirst()
+                .map(node -> node.getParentNode())
+                .map(node -> node.getData());
     }
 
     @Override
@@ -72,11 +75,10 @@ abstract class AbstractBinaryTree<T> implements Tree<T> {
      * @param child The child data
      */
     protected void addLeft(T child) {
-        if (index.containsKey(child)) {
+        if (contains(child)) {
             throw new IllegalArgumentException("Data is already in the tree");
         }
         BinaryNode node = new BinaryNode(root, child);
-        index.put(child, node);
         root.addLeft(node);
     }
 
@@ -86,14 +88,12 @@ abstract class AbstractBinaryTree<T> implements Tree<T> {
      * @param child The child data
      */
     protected void addRight(T child) {
-        if (index.containsKey(child)) {
+        if (contains(child)) {
             throw new IllegalArgumentException("Data is already in the tree");
         }
         BinaryNode node = new BinaryNode(root, child);
-        index.put(child, node);
         root.addRight(node);
     }
-
 
     /**
      * Add a left child to a specific parent.
@@ -103,12 +103,11 @@ abstract class AbstractBinaryTree<T> implements Tree<T> {
      */
     protected void addLeft(T parent, T child) {
         BinaryNode<T> parentNode = getNode(parent);
-        if (index.containsKey(child)) {
+        if (contains(child)) {
             throw new IllegalArgumentException("Data is already in the tree");
         }
         BinaryNode node = new BinaryNode(parentNode, child);
         parentNode.addLeft(node);
-        index.put(child, node);
     }
 
     /**
@@ -119,12 +118,11 @@ abstract class AbstractBinaryTree<T> implements Tree<T> {
      */
     protected void addRight(T parent, T child) {
         BinaryNode<T> parentNode = getNode(parent);
-        if (index.containsKey(child)) {
+        if (contains(child)) {
             throw new IllegalArgumentException("Data is already in the tree");
         }
         BinaryNode node = new BinaryNode(parentNode, child);
         parentNode.addRight(node);
-        index.put(child, node);
     }
 
     /**
@@ -134,7 +132,11 @@ abstract class AbstractBinaryTree<T> implements Tree<T> {
      * @return The child data
      */
     public final Optional<T> getLeft(T parent) {
-        return Optional.ofNullable(index.get(parent)).flatMap(node -> Optional.ofNullable(node.getLeft()).map(n -> n.getData()));
+        return makePreOrderDepthStream(root)
+                .filter(node -> node.getData().equals(parent))
+                .findFirst()
+                .map(BinaryNode::getLeft)
+                .map(BinaryNode::getData);
     }
 
     /**
@@ -144,7 +146,11 @@ abstract class AbstractBinaryTree<T> implements Tree<T> {
      * @return The child data
      */
     public final Optional<T> getRight(T parent) {
-        return Optional.ofNullable(index.get(parent)).flatMap(node -> Optional.ofNullable(node.getRight()).map(n -> n.getData()));
+        return makePreOrderDepthStream(root)
+                .filter(node -> node.getData().equals(parent))
+                .findFirst()
+                .map(BinaryNode::getRight)
+                .map(BinaryNode::getData);
     }
 
     /**
@@ -154,61 +160,63 @@ abstract class AbstractBinaryTree<T> implements Tree<T> {
      * @return The node
      */
     private BinaryNode<T> getNode(T object) {
-        if (!index.containsKey(object)) {
-            throw new NoSuchElementException("No data found for object");
+        Optional<BinaryNode<T>> found = makePreOrderDepthStream(root)
+                .filter(node -> node.getData().equals(object))
+                .findFirst();
+        if (found.isPresent()) {
+            return found.get();
         }
-        return index.get(object);
+        throw new NoSuchElementException("No data found for object");
     }
 
     /**
      * Recursively set up an in-order depth first stream.
      *
-     * @param data The point in the tree to work from
+     * @param node The point in the tree to work from
      * @return The stream
      */
-    private Stream<T> makeInOrderDepthStream(T data) {
+    private Stream<BinaryNode<T>> makeInOrderDepthStream(BinaryNode<T> node) {
         // Inorder   (Left, Root, Right)
-        Optional<T> left = getLeft(data);
-        Optional<T> right = getRight(data);
+        BinaryNode<T> left = node.getLeft();
+        BinaryNode<T> right = node.getRight();
         return Stream.concat(
-                left.isPresent() ? Stream.of(left.get()).flatMap(this::makeInOrderDepthStream) : Stream.empty(),
-                Stream.concat(Stream.of(data),
-                        right.isPresent() ? Stream.of(right.get()).flatMap(this::makeInOrderDepthStream) : Stream.empty()));
+                left != null ? Stream.of(left).flatMap(this::makeInOrderDepthStream) : Stream.empty(),
+                Stream.concat(Stream.of(node),
+                        right != null ? Stream.of(right).flatMap(this::makeInOrderDepthStream) : Stream.empty()));
     }
 
     /**
      * Recursively set up a pre-order depth first stream.
      *
-     * @param data The point in the tree to work from
+     * @param node The point in the tree to work from
      * @return The stream
      */
-    private Stream<T> makePreOrderDepthStream(T data) {
+    private Stream<BinaryNode<T>> makePreOrderDepthStream(BinaryNode<T> node) {
         // Preorder  (Root, Left, Right)
-        Optional<T> left = getLeft(data);
-        Optional<T> right = getRight(data);
-        return Stream.concat(Stream.of(data),
+        BinaryNode<T> left = node.getLeft();
+        BinaryNode<T> right = node.getRight();
+        return Stream.concat(Stream.of(node),
                 Stream.concat(
-                        left.isPresent() ? Stream.of(left.get()).flatMap(this::makePreOrderDepthStream) : Stream.empty(),
-                        right.isPresent() ? Stream.of(right.get()).flatMap(this::makePreOrderDepthStream) : Stream.empty()));
+                        left != null ? Stream.of(left).flatMap(this::makePreOrderDepthStream) : Stream.empty(),
+                        right != null ? Stream.of(right).flatMap(this::makePreOrderDepthStream) : Stream.empty()));
     }
 
     /**
      * Recursively set up a post-order depth first stream.
      *
-     * @param data The point in the tree to work from
+     * @param node The point in the tree to work from
      * @return The stream
      */
-    private Stream<T> makePostOrderDepthStream(T data) {
+    private Stream<BinaryNode<T>> makePostOrderDepthStream(BinaryNode<T> node) {
         // Postorder (Left, Right, Root) : 4 5 2 3 1
-        Optional<T> left = getLeft(data);
-        Optional<T> right = getRight(data);
+        BinaryNode<T> left = node.getLeft();
+        BinaryNode<T> right = node.getRight();
         return Stream.concat(
-                left.isPresent() ? Stream.of(left.get()).flatMap(this::makePostOrderDepthStream) : Stream.empty(),
+                left != null ? Stream.of(left).flatMap(this::makePostOrderDepthStream) : Stream.empty(),
                 Stream.concat(
-                        right.isPresent() ? Stream.of(right.get()).flatMap(this::makePostOrderDepthStream) : Stream.empty(),
-                        Stream.of(data)));
+                        right != null ? Stream.of(right).flatMap(this::makePostOrderDepthStream) : Stream.empty(),
+                        Stream.of(node)));
     }
-
 
     /**
      * Recursively set up a breadth first stream.
