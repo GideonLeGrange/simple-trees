@@ -11,12 +11,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GeneralTreeTest {
 
-    //Inorder   (Left, Root, Right) :
-    private static final String[] IN_ORDER_DEPTH = {""};
-
-    private static final String[] DEPTH = {
-            "ROOT", "A", "1", "2", "3", "B", "4", "5", "6", "C", "7", "8", "9"
+    private static final String[] PRE_ORDER_DEPTH = {
+            "ROOT","A","1","2","3","B","4","5","6","C","7","8","9"
     };
+
+    private static final String[] POST_ORDER_DEPTH = {
+            "1","2","3","A","4","5","6","B","7","8","9","C","ROOT"
+    };
+
+
     private static final String[] BREADTH = {
             "ROOT", "A", "B", "C", "1", "2", "3", "4", "5", "6", "7", "8", "9"
     };
@@ -55,17 +58,17 @@ class GeneralTreeTest {
     }
 
     @Test
-    void depthStream() {
-        List<String> have = symmetric.depthStream().collect(Collectors.toList());
-        List<String> want = Arrays.asList(DEPTH);
-        assertArrayEquals(want.toArray(), have.toArray(), "Depth first must match");
+    void preOrderDepthStream() {
+        List<String> have = symmetric.preOrderDepthStream().collect(Collectors.toList());
+        List<String> want = Arrays.asList(PRE_ORDER_DEPTH);
+        assertArrayEquals(want.toArray(), have.toArray(), "Pre-order depth first must match");
     }
 
     @Test
-    void inOrderDepthStream() {
-        List<String> have = symmetric.depthStream().collect(Collectors.toList());
-        List<String> want = Arrays.asList(IN_ORDER_DEPTH);
-        assertArrayEquals(want.toArray(), have.toArray(), "In-order depth-first first must match");
+    void postOrderDepthStream() {
+        List<String> have = symmetric.postOrderDepthStream().collect(Collectors.toList());
+        List<String> want = Arrays.asList(POST_ORDER_DEPTH);
+        assertArrayEquals(want.toArray(), have.toArray(), "Post-order depth first must match");
     }
 
     @Test

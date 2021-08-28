@@ -18,11 +18,18 @@ public interface Tree<T> {
     boolean contains(T object);
 
     /**
-     * Return a stream that does depth-first traversal of the tree.
+     * Return a stream that does pre-order depth-first traversal of the tree.
      *
      * @return The stream
      */
-    Stream<T> depthStream();
+    Stream<T> preOrderDepthStream();
+
+    /**
+     * Return a stream that does post-order depth-first traversal of the tree.
+     *
+     * @return The stream
+     */
+    Stream<T> postOrderDepthStream();
 
     /**
      * Return a stream that does breadth-first traversal of the tree.

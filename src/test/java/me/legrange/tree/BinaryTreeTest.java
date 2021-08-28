@@ -12,12 +12,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BinaryTreeTest {
 
-    private static final String[] DEPTH = {
-            "ROOT", "A", "1", "a", "b", "2", "c", "d", "B", "3", "e","f", "4", "g","h"
-    };
     private static final String[] BREADTH = {
             "ROOT", "A", "B", "1", "2", "3", "4", "a","b","c","d","e","f","g","h"
     };
+
+    private static final String[] IN_ORDER_DEPTH = {
+            "a","1","b","A","c","2","d","ROOT","e","3","f","B","g","4","h"
+    };
+
+    private static final String[] PRE_ORDER_DEPTH = {
+            "ROOT", "A", "1", "a", "b", "2", "c", "d", "B", "3", "e","f", "4", "g","h"
+    };
+
+    private static final String[] POST_ORDER_DEPTH = {
+            "a", "b", "1", "c","d","2","A","e","f","3","g","h","4","B","ROOT"
+    };
+
 
     private static BinaryTree<String> symmetric;
 
@@ -43,10 +53,24 @@ class BinaryTreeTest {
     }
 
     @Test
-    void depthStream() {
-        List<String> have = symmetric.depthStream().collect(Collectors.toList());
-        List<String> want = Arrays.asList(DEPTH);
-        assertArrayEquals(want.toArray(), have.toArray(), "Depth first must match");
+    void inOrderDepthSearch() {
+        List<String> have = symmetric.inOrderDepthStream().collect(Collectors.toList());
+        List<String> want = Arrays.asList(IN_ORDER_DEPTH);
+        assertArrayEquals(want.toArray(), have.toArray(), "In-order depth first must match");
+    }
+
+    @Test
+    void preOrderDepthSearch() {
+        List<String> have = symmetric.preOrderDepthStream().collect(Collectors.toList());
+        List<String> want = Arrays.asList(PRE_ORDER_DEPTH);
+        assertArrayEquals(want.toArray(), have.toArray(), "Pre-order depth first must match");
+    }
+
+    @Test
+    void postOrderDepthSearch() {
+        List<String> have = symmetric.postOrderDepthStream().collect(Collectors.toList());
+        List<String> want = Arrays.asList(POST_ORDER_DEPTH);
+        assertArrayEquals(want.toArray(), have.toArray(), "Post-order depth first must match");
     }
 
     @Test

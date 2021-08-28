@@ -37,13 +37,6 @@ class BinarySearchTreeTest {
     }
 
     @Test
-    void depthStream() {
-        List<Integer> have = symmetric.depthStream().collect(Collectors.toList());
-        List<Integer> want = Arrays.asList(DEPTH);
-        assertArrayEquals(want.toArray(), have.toArray(), "Depth first must match");
-    }
-
-    @Test
     void breadthStream() {
         List<Integer> have = symmetric.breadthStream().collect(Collectors.toList());
         List<Integer> want = Arrays.asList(BREADTH);

@@ -1,5 +1,7 @@
 package me.legrange.tree;
 
+import java.util.stream.Stream;
+
 public final class BinaryTree<T> extends AbstractBinaryTree<T> {
 
     /**

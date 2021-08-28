@@ -28,12 +28,17 @@ public final class GeneralTree<T> implements Tree<T> {
 
     @Override
     public boolean contains(T object) {
-        return depthStream().anyMatch(data -> data.equals(object));
+        return preOrderDepthStream().anyMatch(data -> data.equals(object));
     }
 
     @Override
-    public Stream<T> depthStream() {
-        return makeDepthStream(root).map(node -> node.getData());
+    public Stream<T> preOrderDepthStream() {
+        return makePreOrderDepthStream(root).map(node -> node.getData());
+    }
+
+    @Override
+    public Stream<T> postOrderDepthStream() {
+        return makePostOrderDepthStream(root).map(node -> node.getData());
     }
 
     @Override
@@ -99,7 +104,7 @@ public final class GeneralTree<T> implements Tree<T> {
      * @return The node
      */
     private GeneralNode<T> getNode(T object) {
-        Optional<GeneralNode<T>> first = makeDepthStream(root)
+        Optional<GeneralNode<T>> first = makePreOrderDepthStream(root)
                 .filter(node -> node.getData().equals(object))
                 .findFirst();
         if (first.isPresent()) {
@@ -109,14 +114,24 @@ public final class GeneralTree<T> implements Tree<T> {
     }
 
     /**
-     * Recursively set up a depth first stream.
+     * Recursively set up a pre-order depth first stream.
      *
      * @param data The point in the tree to work from
      * @return The stream
      */
-    private Stream<GeneralNode<T>> makeDepthStream(GeneralNode<T> data) {
+    private Stream<GeneralNode<T>> makePreOrderDepthStream(GeneralNode<T> data) {
         return Stream.concat(Stream.of(data),
-                data.getChildren().stream().flatMap(this::makeDepthStream));
+                data.getChildren().stream().flatMap(this::makePreOrderDepthStream));
+    }
+
+    /**
+     * Recursively set up a post-order depth first stream.
+     *
+     * @param data The point in the tree to work from
+     * @return The stream
+     */
+    private Stream<GeneralNode<T>> makePostOrderDepthStream(GeneralNode<T> data) {
+        return Stream.concat(data.getChildren().stream().flatMap(this::makePostOrderDepthStream), Stream.of(data));
     }
 
     /**

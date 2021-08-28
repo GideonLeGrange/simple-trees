@@ -29,13 +29,16 @@ abstract class AbstractBinaryTree<T> implements Tree<T> {
         return index.containsKey(object);
     }
 
-    @Override
-    public final  Stream<T> depthStream() {
-        return makeDepthStream(root.getData());
-    }
-
     public final Stream<T> inOrderDepthStream() {
         return makeInOrderDepthStream(root.getData());
+    }
+
+    public final Stream<T> preOrderDepthStream() {
+        return makePreOrderDepthStream(root.getData());
+    }
+
+    public final Stream<T> postOrderDepthStream() {
+        return makePostOrderDepthStream(root.getData());
     }
 
     @Override
@@ -164,34 +167,52 @@ abstract class AbstractBinaryTree<T> implements Tree<T> {
     }
 
     /**
-     * Recursively set up a depth first stream.
-     *
-     * @param data The point in the tree to work from
-     * @return The stream
-     */
-    private Stream<T> makeDepthStream(T data) {
-        Optional<T> left = getLeft(data);
-        Optional<T> right = getRight(data);
-        return Stream.concat(Stream.of(data),
-                Stream.concat(
-                        left.isPresent() ? Stream.of(left.get()).flatMap(this::makeDepthStream) : Stream.empty(),
-                        right.isPresent() ? Stream.of(right.get()).flatMap(this::makeDepthStream) : Stream.empty()));
-    }
-
-    /**
      * Recursively set up an in-order depth first stream.
      *
      * @param data The point in the tree to work from
      * @return The stream
      */
     private Stream<T> makeInOrderDepthStream(T data) {
-        // Inorder   (Left, Root, Right) :
+        // Inorder   (Left, Root, Right)
         Optional<T> left = getLeft(data);
         Optional<T> right = getRight(data);
         return Stream.concat(
                 left.isPresent() ? Stream.of(left.get()).flatMap(this::makeInOrderDepthStream) : Stream.empty(),
                 Stream.concat(Stream.of(data),
-                right.isPresent() ? Stream.of(right.get()).flatMap(this::makeInOrderDepthStream) : Stream.empty()));
+                        right.isPresent() ? Stream.of(right.get()).flatMap(this::makeInOrderDepthStream) : Stream.empty()));
+    }
+
+    /**
+     * Recursively set up a pre-order depth first stream.
+     *
+     * @param data The point in the tree to work from
+     * @return The stream
+     */
+    private Stream<T> makePreOrderDepthStream(T data) {
+        // Preorder  (Root, Left, Right)
+        Optional<T> left = getLeft(data);
+        Optional<T> right = getRight(data);
+        return Stream.concat(Stream.of(data),
+                Stream.concat(
+                        left.isPresent() ? Stream.of(left.get()).flatMap(this::makePreOrderDepthStream) : Stream.empty(),
+                        right.isPresent() ? Stream.of(right.get()).flatMap(this::makePreOrderDepthStream) : Stream.empty()));
+    }
+
+    /**
+     * Recursively set up a post-order depth first stream.
+     *
+     * @param data The point in the tree to work from
+     * @return The stream
+     */
+    private Stream<T> makePostOrderDepthStream(T data) {
+        // Postorder (Left, Right, Root) : 4 5 2 3 1
+        Optional<T> left = getLeft(data);
+        Optional<T> right = getRight(data);
+        return Stream.concat(
+                left.isPresent() ? Stream.of(left.get()).flatMap(this::makePostOrderDepthStream) : Stream.empty(),
+                Stream.concat(
+                        right.isPresent() ? Stream.of(right.get()).flatMap(this::makePostOrderDepthStream) : Stream.empty(),
+                        Stream.of(data)));
     }
 
 
