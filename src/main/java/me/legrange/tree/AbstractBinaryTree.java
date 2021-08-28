@@ -134,9 +134,6 @@ abstract class AbstractBinaryTree<T> implements Tree<T> {
      * @return The child data
      */
     public final Optional<T> getLeft(T parent) {
-        if (!index.containsKey(parent)) {
-            throw new NoSuchElementException("No data found for object");
-        }
         return Optional.ofNullable(index.get(parent)).flatMap(node -> Optional.ofNullable(node.getLeft()).map(n -> n.getData()));
     }
 
@@ -147,9 +144,6 @@ abstract class AbstractBinaryTree<T> implements Tree<T> {
      * @return The child data
      */
     public final Optional<T> getRight(T parent) {
-        if (!index.containsKey(parent)) {
-            throw new NoSuchElementException("No data found for object");
-        }
         return Optional.ofNullable(index.get(parent)).flatMap(node -> Optional.ofNullable(node.getRight()).map(n -> n.getData()));
     }
 
