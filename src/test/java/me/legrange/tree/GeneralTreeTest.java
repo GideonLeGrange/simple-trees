@@ -121,4 +121,32 @@ class GeneralTreeTest {
         assertEquals(true, symmetric.getParent("9").isPresent(), "Have parent for 9");
         assertEquals(true, symmetric.getParent("9").get().equals("C"), "Parent for 9 is C");
     }
+
+    @Test
+    void moveDataSameLevel() {
+        symmetric.move("A","9");
+        assertEquals(true, symmetric.getParent("9").isPresent(), "Have parent for 9");
+        assertEquals(true, symmetric.getParent("9").get().equals("A"), "Parent for 9 is A");
+        assertEquals(false, symmetric.getParent("9").get().equals("C"), "Parent for 9 is not C");
+        setup();
+    }
+
+    @Test
+    void moveDataDifferentLevel() {
+        symmetric.move("ROOT","9");
+        assertEquals(true, symmetric.getParent("9").isPresent(), "Have parent for 9");
+        assertEquals(true, symmetric.getParent("9").get().equals("ROOT"), "Parent for 9 is ROOT");
+        setup();
+    }
+
+    @Test
+    void moveBranch() {
+        symmetric.move("8","A");
+        assertEquals(true, symmetric.getParent("A").isPresent(), "Have parent for A");
+        assertEquals(false, symmetric.getParent("A").get().equals("ROOT"), "Parent for A is  not ROOT");
+        assertEquals(true, symmetric.getParent("A").get().equals("8"), "Parent for A is  8");
+        int depth = symmetric.getDepth();
+        assertEquals(5, depth, "Depth must match");
+        setup();
+    }
 }

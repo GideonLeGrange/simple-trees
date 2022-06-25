@@ -30,6 +30,18 @@ final class GeneralNode<T> {
         children.add(child);
     }
 
+    void remove(GeneralNode<T> child) {
+        children.remove(child);
+    }
+
+    static <T> GeneralNode<T> changeParent(GeneralNode<T> parentNode, GeneralNode<T> node) {
+        GeneralNode<T> newNode = new GeneralNode<>(parentNode, node.data);
+        for (GeneralNode<T> childNode : node.children) {
+            newNode.add(changeParent(newNode, childNode));
+        }
+        return newNode;
+    }
+
     List<GeneralNode<T>> getChildren() {
         return children;
     }

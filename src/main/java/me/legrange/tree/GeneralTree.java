@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
+import static me.legrange.tree.GeneralNode.changeParent;
 
 /**
  * A simple tree class that hides the tree implementation. The user works only with the Tree object
@@ -84,6 +85,20 @@ public final class GeneralTree<T> implements Tree<T> {
     public void add(T parent, T child) {
         GeneralNode<T> parentNode = getNode(parent);
         parentNode.add(new GeneralNode(parentNode, child));
+    }
+
+    /**
+     * Add a move to a new parent.
+     *
+     * @param parent The new parent data
+     * @param child  The new child data
+     */
+    public void move(T parent, T child) {
+        GeneralNode<T> childNode = getNode(child);
+        GeneralNode<T> currentParentNode = childNode.getParentNode();
+        currentParentNode.remove(childNode);
+        GeneralNode<T> newParentNode = getNode(parent);
+        newParentNode.add(changeParent(newParentNode, childNode));
     }
 
     /**
